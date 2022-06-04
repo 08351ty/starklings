@@ -1,12 +1,12 @@
 %lang starknet
 from starkware.cairo.common.math_cmp import is_le
 
-# I AM NOT DONE
-
 # TODO
 # Rewrite those functions with a high level syntax
 @external
 func sum_array(array_len : felt, array : felt*) -> (sum : felt):
+    
+    return rec_sum_array(array_len, array, 0)
     # [ap] = [fp - 4]; ap++
     # [ap] = [fp - 3]; ap++
     # [ap] = 0; ap++
@@ -15,6 +15,11 @@ func sum_array(array_len : felt, array : felt*) -> (sum : felt):
 end
 
 func rec_sum_array(array_len : felt, array : felt*, sum : felt) -> (sum : felt):
+    if array_len == 0:
+        return (sum)
+    end
+
+    return rec_sum_array(array_len - 1, array + 1, sum + array[0])
     # jmp continue if [fp - 5] != 0
 
     # stop:
@@ -37,6 +42,25 @@ end
 # It's possible to do it with only registers, labels and conditional jump. No reference or localvar
 @external
 func max{range_check_ptr}(a : felt, b : felt) -> (max : felt):
+    [ap] = [fp - 5]; ap++
+    [ap] = [fp - 4]; ap++
+    [ap] = [fp - 3]; ap++
+
+    call is_le
+
+    [ap] = [ap - 2]; ap++
+
+    jmp b_is_more if [ap - 2] != 0
+
+    a_is_more:
+    [ap] = [fp - 4]; ap++
+    jmp done
+
+    b_is_more:
+    [ap] = [fp - 3]; ap++
+
+    done:
+    ret
     # let (res) = is_le(a, b)
     # if res == 1:
     #     return (b)

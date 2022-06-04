@@ -4,8 +4,6 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math import assert_le
 
-# I AM NOT DONE
-
 struct Star:
     member name : felt
     member size : felt
@@ -61,6 +59,12 @@ func batch_create_stars{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     # Insert the star at index 0 of the array
     # recursively call `batch_create_stars`
 
+    if array_len == 0:
+        return()
+    end
+
+    insert_star(address, array[0])
+    batch_create_stars(address, array_len - 1, array + Star.SIZE)
     return ()
 end
 

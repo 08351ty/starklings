@@ -1,6 +1,5 @@
 %lang starknet
 
-# I AM NOT DONE
 
 # Ressources
 # https://www.cairo-lang.org/docs/how_cairo_works/cairo_intro.html#registers
@@ -10,6 +9,8 @@
 # Rewrite this function body in a high level syntax
 @external
 func ret_42() -> (r : felt):
+    let r = 42
+    return (r)
     # [ap] = 42; ap++
     # ret
 end
@@ -18,6 +19,9 @@ end
 # Rewrite this function body in a low level syntax, using registers
 @external
 func ret_0_and_1() -> (zero : felt, one : felt):
+    [ap] = 0; ap++
+    [ap] = 1; ap++
+    ret
     # return (0, 1)
 end
 

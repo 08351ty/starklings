@@ -4,8 +4,6 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math import assert_le
 
-# I AM NOT DONE
-
 # We want to store more info than just the `star` size.
 # We are going to give them a name and a size
 
@@ -17,12 +15,21 @@ from starkware.cairo.common.math import assert_le
 # Both members are of type `felt`
 # https://www.cairo-lang.org/docs/reference/syntax.html#structs
 
+struct Star:
+    member name: felt
+    member size: felt
+end
+
 @storage_var
 func dust(address : felt) -> (amount : felt):
 end
 
 # TODO
 # Update the `star` storage to store `Star` instead of `felt`
+
+@storage_var
+func star(address: felt, slot: felt) -> (size: Star):
+end
 
 @storage_var
 func slot(address : felt) -> (slot : felt):
@@ -46,6 +53,21 @@ end
 # Update the `light_star` external so it take a `Star` struct instead of the amount of dust
 # Caller `dust` storage must be deducted from an amount equal to the star size
 
+@external
+func light_star{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(star_struct: Star):
+    let (caller: felt) = get_caller_address()
+    let (amt: felt) = dust.read(caller)
+    let dust_amount: felt = star_struct.size
+    assert_le(star_struct.size, amt)
+    let (caller_slot: felt) = slot.read(caller)
+    dust.write(caller, amt - dust_amount)
+    star.write(caller, caller_slot, star_struct)
+    slot.write(caller, caller_slot + 1)
+    a_star_is_born.emit(caller, caller_slot, star_struct)
+
+    return ()
+end
+
 @view
 func view_dust{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     address : felt
@@ -65,6 +87,14 @@ end
 # TODO
 # Create a view for `star`
 # It must return an instance of `Star` instead of a `felt`
+@view
+func view_star{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    address: felt, slot: felt
+) -> (star_struct: Star):
+    let (star_struct: Star) = star.read(address, slot)
+    return (star_struct)
+end
+
 
 #########
 # TESTS #
