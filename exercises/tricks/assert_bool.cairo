@@ -2,27 +2,29 @@
 
 # Boolean assertions, such as "x OR y" for boolean felts, can also be implemented without conditionals.
 
-# I AM NOT DONE
-
 # TODO Implement the following boolean asserts without "if"
 
 func assert_or(x, y):
     # FILL ME
+    assert (x - 1) * (y - 1) = 0
     return ()
 end
 
 func assert_and(x, y):
     # FILL ME
+    assert x * y = 1
     return ()
 end
 
 func assert_nor(x, y):
     # FILL ME
+    assert x * y = 0
     return ()
 end
 
 func assert_xor(x, y):
     # FILL ME
+    assert x + y = 1
     return ()
 end
 

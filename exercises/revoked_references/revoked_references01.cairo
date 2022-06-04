@@ -2,8 +2,6 @@
 
 # References in Cairo are like aliases to specific memory cells pointed by ap
 
-# I AM NOT DONE
-
 # TODO: complete the bar function to make the test pass
 # You will encounter a "revoked reference" error
 # https://www.cairo-lang.org/docs/how_cairo_works/consts.html#revoked-references
@@ -20,10 +18,13 @@ func foo(n):
 end
 
 func bar{hash_ptr : HashBuiltin*}():
+    alloc_locals
     hash2(1, 2)  # Do not change
     foo(3)  # Do not change
 
     # Insert something here to make the test pass
+    tempvar hash_ptr: HashBuiltin* = hash_ptr
+    
 
     hash2(3, 4)  # Do not change
     return ()  # Do not change
